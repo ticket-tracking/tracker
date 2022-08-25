@@ -37,7 +37,7 @@ jobs:
       - name: Mix Format & DB
         run: |
           mix format --check-formatted
-          mix ecto.migrate
+          mix ecto.setup
 
       - name: Run Tests
         run: mix coveralls.github
