@@ -40,6 +40,7 @@ defmodule TrackerWeb.ConnCase do
     unless tags[:async] do
       Sandbox.mode(Tracker.Repo, {:shared, self()})
     end
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

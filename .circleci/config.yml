@@ -1,0 +1,63 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: 'circleci/elixir:1.12'
+        environment:
+          MIX_ENV: test
+      - image: 'postgres:10'
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+
+    working_directory: ~/tracker
+
+    steps:
+      - checkout
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+
+      - restore_cache:
+          keys:
+            - 'v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}'
+            - 'v1-mix-cache-{{ .Branch }}'
+            - v1-mix-cache
+      - restore_cache:
+          keys:
+            - 'v1-build-cache-{{ .Branch }}'
+            - v1-build-cache
+
+      - run:
+          name: Install dependencies
+          command: |
+            mix deps.get
+
+      - save_cache:
+          key: 'v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}'
+          paths:
+            - deps
+      - save_cache:
+          key: 'v1-build-cache-{{ .Branch }}'
+          paths:
+            - _build
+
+      - run:
+          name: Wait for postgres to start up
+          command: |
+            dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Run style and code consistency checks
+          command: |
+            mix compile --warnings-as-errors
+            mix format --check-formatted
+
+      - run:
+          name: Run tests
+          command: |
+            mix coveralls.html
+
+      - store_artifacts:
+          name: Coverage Report
+          path: cover

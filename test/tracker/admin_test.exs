@@ -10,7 +10,7 @@ defmodule Tracker.AdminTests do
 
   describe "admin" do
     test "ok: list all admin users" do
-      assert 10 == length(Admin.list_admin_users)
+      assert 10 == length(Admin.list_admin_users())
     end
   end
 end

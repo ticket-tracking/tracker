@@ -10,7 +10,7 @@ defmodule Tracker.AdminUserFactory do
         %User{
           email: sequence(:email, &"email-#{&1}@example.com"),
           encrypted_password: "password",
-          role: sequence(:role, ["root", "admin"]),
+          role: sequence(:role, ["root", "admin"])
         }
       end
     end
