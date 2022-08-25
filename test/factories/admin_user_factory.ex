@@ -9,7 +9,7 @@ defmodule Tracker.AdminUserFactory do
       def admin_user_factory do
         %User{
           email: sequence(:email, &"email-#{&1}@example.com"),
-          encrypted_password: "password",
+          encrypted_password: "password@123",
           role: sequence(:role, ["root", "admin"])
         }
       end
