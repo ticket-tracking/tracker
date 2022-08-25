@@ -17,9 +17,12 @@ defmodule TrackerWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox
+
   using do
     quote do
       # Import conveniences for testing with connections
+      import Tracker.Factory
       import Plug.Conn
       import Phoenix.ConnTest
       import TrackerWeb.ConnCase
@@ -32,7 +35,12 @@ defmodule TrackerWeb.ConnCase do
   end
 
   setup tags do
-    Tracker.DataCase.setup_sandbox(tags)
+    :ok = Sandbox.checkout(Tracker.Repo)
+
+    unless tags[:async] do
+      Sandbox.mode(Tracker.Repo, {:shared, self()})
+    end
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

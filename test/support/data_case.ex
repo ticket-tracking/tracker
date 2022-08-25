@@ -16,6 +16,8 @@ defmodule Tracker.DataCase do
 
   use ExUnit.CaseTemplate
 
+  alias Ecto.Adapters.SQL.Sandbox
+
   using do
     quote do
       alias Tracker.Repo
@@ -24,20 +26,18 @@ defmodule Tracker.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Tracker.DataCase
+      import Tracker.Factory
     end
   end
 
   setup tags do
-    Tracker.DataCase.setup_sandbox(tags)
-    :ok
-  end
+    :ok = Sandbox.checkout(Tracker.Repo)
 
-  @doc """
-  Sets up the sandbox based on the test tags.
-  """
-  def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Tracker.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    unless tags[:async] do
+      Sandbox.mode(Tracker.Repo, {:shared, self()})
+    end
+
+    :ok
   end
 
   @doc """
