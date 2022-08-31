@@ -84,7 +84,6 @@ defmodule Tracker.Accounts do
     |> Repo.get_by(email: email)
   end
 
-
   @spec add_preload(Ecto.Queryable.t(), atom) :: Ecto.Query.t()
   def add_preload(query, :department) do
     from(q in query,

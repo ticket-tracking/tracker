@@ -4,7 +4,6 @@ defmodule Tracker.Repo do
     adapter: Ecto.Adapters.Postgres
 end
 
-
 defmodule Tracker.Repo.Helpers do
   @moduledoc false
 
