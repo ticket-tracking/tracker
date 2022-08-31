@@ -26,16 +26,16 @@ defmodule Tracker.TypesTest do
     end
 
     test "modular_crypt_format/4 with default params" do
-      {:ok, pbkdf2} = Pbkdf2Hash.dump("test")
+      {:ok, "$pbkdf2-" <> rest = value} = Pbkdf2Hash.dump("test")
 
-      [_alg, _rounds, salt, hash] = String.split(pbkdf2, "$", trim: true)
+      [alg, rounds, salt, hash] = String.split(rest, "$", trim: true)
       decoded_salt = Base64.decode(salt)
       hash = hash |> Base64.decode() |> Base.encode64()
 
-      assert Pbkdf2Hash.modular_crypt_format(hash, decoded_salt) == pbkdf2
-      assert Pbkdf2Hash.modular_crypt_format(hash, salt) == pbkdf2
+      assert Pbkdf2Hash.modular_crypt_format(hash, decoded_salt, alg, rounds) == value
+      assert Pbkdf2Hash.modular_crypt_format(hash, salt, alg, rounds) == value
 
-      assert Pbkdf2Hash.verify("test", pbkdf2)
+      assert Pbkdf2Hash.verify("test", value)
     end
 
     test "modular_crypt_format/4 with custom params" do
