@@ -25,6 +25,7 @@ defmodule Tracker.Investigation.Department do
     field :name, :string
     field :active, :boolean
     field :in_queue, :boolean
+    has_many(:accounts, Tracker.Accounts.Account, on_delete: :delete_all)
 
     timestamps()
   end
